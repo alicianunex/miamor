@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juegos - Ali & Ainhoa</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-body: 'Lato', sans-serif;
+        --font-heading: 'Playfair Display', serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: linear-gradient(135deg, #fdfdfd 0%, #ffffff 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      body.dark-theme {
+        background: linear-gradient(135deg, #1a1a1d 0%, #2a2a2d 100%);
+      }
+
+      .games-container {
+        max-width: 900px;
+        width: 100%;
+      }
+
+      .games-header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .games-header h1 {
+        font-family: var(--font-heading);
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        color: #4a4a4a;
+        margin-bottom: 10px;
+      }
+
+      body.dark-theme .games-header h1 {
+        color: #d8bfd8;
+      }
+
+      .games-header p {
+        color: #999999;
+        font-size: 16px;
+      }
+
+      body.dark-theme .games-header p {
+        color: #888888;
+      }
+
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .game-card {
+        background: #ffffff;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      body.dark-theme .game-card {
+        background: #2a2a2e;
+        border-color: #3a3a3e;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .game-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 24px rgba(194, 24, 91, 0.25);
+        border-color: #c2185b;
+      }
+
+      .game-icon {
+        font-size: 64px;
+      }
+
+      .game-title {
+        font-family: var(--font-heading);
+        font-size: 24px;
+        color: #4a4a4a;
+        margin: 0;
+      }
+
+      body.dark-theme .game-title {
+        color: #d8bfd8;
+      }
+
+      .game-description {
+        color: #999999;
+        font-size: 14px;
+        margin: 0;
+      }
+
+      body.dark-theme .game-description {
+        color: #888888;
+      }
+
+      .game-btn {
+        background: #c2185b;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-family: var(--font-body);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .game-btn:hover {
+        background: #e91e63;
+        transform: scale(1.05);
+      }
+
+      .theme-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #000000;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .theme-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-theme .theme-toggle {
+        background: #2a2a2e;
+        border: 1px solid #3a3a3e;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        color: #d8bfd8;
+      }
+
+      .back-link {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #000000;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-theme .back-link {
+        background: #2a2a2e;
+        border: 1px solid #3a3a3e;
+        color: #d8bfd8;
+      }
+
+      @media (max-width: 768px) {
+        .games-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .games-header {
+          margin-bottom: 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link" title="Volver atrás">←</a>
+    <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">
+      🌙
+    </button>
+
+    <div class="games-container">
+      <div class="games-header">
+        <h1>Juegos</h1>
+        <p>Elige un juego para jugar</p>
+      </div>
+
+      <div class="games-grid">
+        <!-- Memory Game -->
+        <div class="game-card">
+          <div class="game-icon">🧠</div>
+          <h2 class="game-title">Memory Game</h2>
+          <p class="game-description">
+            Encuentra los pares correctos antes de que se acaben los intentos
+          </p>
+          <button
+            class="game-btn"
+            onclick="window.location.href='memory-game.html'"
+          >
+            Jugar
+          </button>
+        </div>
+
+        <!-- Tic Tac Toe -->
+        <div class="game-card">
+          <div class="game-icon">⭕</div>
+          <h2 class="game-title">Tic Tac Toe</h2>
+          <p class="game-description">
+            Clásico juego de tres en raya contra la IA
+          </p>
+          <button
+            class="game-btn"
+            onclick="window.location.href='tic-tac-toe.html'"
+          >
+            Jugar
+          </button>
+        </div>
+
+        <!-- Space Invaders -->
+        <div class="game-card">
+          <div class="game-icon">👾</div>
+          <h2 class="game-title">Space Invaders</h2>
+          <p class="game-description">
+            Dispara a los enemigos y defiende la tierra
+          </p>
+          <button
+            class="game-btn"
+            onclick="window.location.href='space-invaders.html'"
+          >
+            Jugar
+          </button>
+        </div>
+
+        <!-- Snake -->
+        <div class="game-card">
+          <div class="game-icon">🐍</div>
+          <h2 class="game-title">Snake</h2>
+          <p class="game-description">
+            Come comida y crece sin chocarte contigo mismo
+          </p>
+          <button class="game-btn" onclick="window.location.href='snake.html'">
+            Jugar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggle.textContent = '☀️';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '☀️' : '🌙';
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A+A</title>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --font-body: 'Lato', sans-serif;
+        --font-heading: 'Playfair Display', serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-body);
+        background: linear-gradient(135deg, #fdfdfd 0%, #ffffff 100%);
+        min-height: 100%;
+        width: 100%;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .welcome-screen {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: linear-gradient(135deg, #1a1a1d 0%, #2a2a2d 100%);
+        z-index: 1000;
+      }
+
+      .welcome-content {
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .welcome-content:hover {
+        transform: scale(1.1);
+      }
+
+      .heart-emoji {
+        font-size: 120px;
+        margin-bottom: 20px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .enter-text {
+        font-size: 24px;
+        color: #d8bfd8;
+        font-family: 'Lato', sans-serif;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .timeline-container {
+        width: 100%;
+        padding: 60px 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #000000;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .theme-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-theme {
+        background: linear-gradient(135deg, #1a1a1d 0%, #2a2a2d 100%);
+      }
+
+      body.dark-theme .enter-text {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .header h1 {
+        color: #d8bfd8;
+        text-shadow: 2px 2px 4px rgba(216, 191, 216, 0.2);
+      }
+
+      body.dark-theme .header p {
+        color: #f48fb1;
+      }
+
+      body.dark-theme .timeline-content {
+        background: #3a3a45;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      }
+
+      body.dark-theme .timeline-content:hover {
+        box-shadow: 0 12px 32px rgba(225, 190, 231, 0.3);
+      }
+
+      body.dark-theme .date {
+        color: #f48fb1;
+      }
+
+      body.dark-theme .timeline-content h3 {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .timeline-content p {
+        color: #f48fb1;
+      }
+
+      body.dark-theme .theme-toggle {
+        background: #2a2a2e;
+        border: 1px solid #3a3a3e;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .timeline::before {
+        background: #5a5a6a;
+      }
+
+      body.dark-theme .timeline-dot {
+        background: #f8bbd0;
+        border-color: #3a3a45;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 80px;
+      }
+
+      .header h1 {
+        font-size: clamp(3rem, 8vw, 5rem);
+        color: #4a4a4a;
+        margin: 0 0 16px 0;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        font-family: var(--font-heading);
+      }
+
+      .header p {
+        font-size: 24px;
+        color: #000000;
+        margin: 0;
+      }
+
+      .timeline {
+        position: relative;
+        padding: 0;
+      }
+
+      .year-section {
+        margin-bottom: 40px;
+      }
+
+      .year-header {
+        text-align: center;
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        margin-bottom: 40px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+
+      .year-header:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      body.dark-theme .year-header {
+        background: rgba(58, 58, 69, 0.9);
+      }
+
+      .year-header h2 {
+        margin: 0;
+        font-size: 36px;
+        color: #4a4a4a;
+        font-weight: 700;
+        font-family: var(--font-heading);
+      }
+
+      body.dark-theme .year-header h2 {
+        color: #d8bfd8;
+      }
+
+      .toggle-icon {
+        font-size: 24px;
+        transition: transform 0.3s ease;
+        color: #000000;
+      }
+
+      body.dark-theme .toggle-icon {
+        color: #f8bbd0;
+      }
+
+      .toggle-icon.rotated {
+        transform: rotate(-180deg);
+      }
+
+      .year-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+        position: relative;
+      }
+
+      .year-content::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background: #4a4a4a;
+        border-radius: 2px;
+      }
+
+      .year-content.expanded {
+        max-height: 10000px;
+      }
+
+      .timeline-item {
+        display: flex;
+        margin-bottom: 80px;
+        position: relative;
+        align-items: center;
+      }
+
+      .timeline-item:nth-child(odd) {
+        flex-direction: row;
+      }
+
+      .timeline-item:nth-child(even) {
+        flex-direction: row-reverse;
+      }
+
+      .timeline-content {
+        width: 45%;
+        background: white;
+        padding: 32px;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(194, 24, 91, 0.15);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .timeline-content:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(194, 24, 91, 0.25);
+      }
+
+      .timeline-item:nth-child(odd) .timeline-content {
+        margin-right: auto;
+      }
+
+      .timeline-item:nth-child(even) .timeline-content {
+        margin-left: auto;
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 32px;
+        height: 32px;
+        background: #e91e63;
+        border: 6px solid white;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+        z-index: 10;
+      }
+
+      .timeline-icon {
+        width: 100%;
+        height: 200px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 3px solid rgba(0, 0, 0, 0.2);
+        position: relative;
+        object-fit: cover;
+      }
+
+      .date {
+        font-size: 16px;
+        color: #000000;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .timeline-content h3 {
+        font-size: 28px;
+        color: #4a4a4a;
+        margin: 0 0 16px 0;
+        font-weight: 700;
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        font-family: var(--font-heading);
+      }
+
+      .timeline-content p {
+        font-size: 18px;
+        color: #000000;
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      /* Future Message Style for 2026 */
+      .future-message {
+        text-align: center;
+        padding: 60px 40px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(194, 24, 91, 0.15);
+        margin: 40px auto;
+        max-width: 600px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .future-message:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(194, 24, 91, 0.25);
+      }
+
+      .future-message h3 {
+        font-size: 36px;
+        color: #4a4a4a;
+        margin: 0 0 20px 0;
+        font-weight: 700;
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        font-family: var(--font-heading);
+      }
+
+      .future-message p {
+        font-size: 24px;
+        color: #c2185b;
+        margin: 0;
+        font-style: italic;
+        font-weight: 600;
+      }
+
+      body.dark-theme .future-message {
+        background: #3a3a45;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      }
+
+      body.dark-theme .future-message:hover {
+        box-shadow: 0 12px 32px rgba(248, 187, 208, 0.3);
+      }
+
+      body.dark-theme .future-message h3 {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .future-message p {
+        color: #f48fb1;
+      }
+
+      /* Love Letter Envelope Styles */
+      .love-letter-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 40px;
+        margin-top: 40px;
+      }
+
+      .envelope {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        background: #ffffff;
+        border: 2px solid #d0d0d0;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.6s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        overflow: visible;
+      }
+
+      .envelope::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          #e0e0e0 20%,
+          #e0e0e0 80%,
+          transparent 100%
+        );
+        z-index: 2;
+      }
+
+      .envelope:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(194, 24, 91, 0.25);
+      }
+
+      .envelope.opened {
+        transform: rotateX(180deg);
+      }
+
+      .envelope-flap {
+        position: absolute;
+        top: -5px;
+        left: -2px;
+        right: -2px;
+        height: 50%;
+        background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+        border: 2px solid #d0d0d0;
+        border-bottom: none;
+        clip-path: polygon(0 0, 100% 0, 50% 100%);
+        transition: all 0.6s ease;
+        transform-origin: top;
+        box-shadow: inset 0 -2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .envelope-flap::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 10%;
+        right: 10%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(194, 24, 91, 0.2) 50%,
+          transparent 100%
+        );
+      }
+
+      .envelope.opened .envelope-flap {
+        transform: rotateX(180deg);
+      }
+
+      .envelope-body {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .envelope-front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        transition: opacity 0.6s ease;
+        padding-bottom: 40px;
+      }
+
+      .envelope-front::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 30px;
+        height: 20px;
+        background: linear-gradient(135deg, #c2185b 0%, #e91e63 100%);
+        border-radius: 2px;
+        opacity: 0.6;
+      }
+
+      .envelope.opened .envelope-front {
+        opacity: 0;
+      }
+
+      .envelope-letter {
+        position: absolute;
+        width: 90%;
+        height: 90%;
+        background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 100%);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.6s ease 0.3s;
+        box-shadow: inset 0 4px 12px rgba(194, 24, 91, 0.1);
+      }
+
+      .envelope.opened .envelope-letter {
+        opacity: 1;
+      }
+
+      .envelope-text {
+        font-size: 24px;
+        color: #4a4a4a;
+        margin: 0;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .letter-text {
+        font-size: 28px;
+        color: #c2185b;
+        margin: 0;
+        font-weight: 700;
+        text-align: center;
+        font-family: 'Georgia', serif;
+        transform: rotateX(180deg);
+      }
+
+      body.dark-theme .envelope {
+        background: #2a2a2e;
+        border-color: #4a4a4e;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+
+      body.dark-theme .envelope:hover {
+        box-shadow: 0 12px 32px rgba(244, 143, 177, 0.3);
+      }
+
+      body.dark-theme .envelope-flap {
+        background: linear-gradient(180deg, #3a3a3e 0%, #2a2a2e 100%);
+        border-color: #4a4a4e;
+      }
+
+      body.dark-theme .envelope-front {
+        background: #2a2a2e;
+      }
+
+      body.dark-theme .envelope-letter {
+        background: linear-gradient(135deg, #1a1a1e 0%, #2a2a2e 100%);
+      }
+
+      body.dark-theme .envelope-text {
+        color: #d8bfd8;
+      }
+
+      /* Babies Gallery Styles */
+      .babies-gallery-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 40px;
+        margin-top: 40px;
+      }
+
+      .babies-gallery {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 30px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+      }
+
+      .polaroid {
+        background: #ffffff;
+        padding: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        width: 200px;
+        position: relative;
+        transform: rotate(var(--rotation, 0deg));
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .polaroid:nth-child(1) {
+        --rotation: -5deg;
+        margin-bottom: 20px;
+      }
+
+      .polaroid:nth-child(2) {
+        --rotation: 0deg;
+      }
+
+      .polaroid:nth-child(3) {
+        --rotation: 5deg;
+        margin-bottom: 20px;
+      }
+
+      .polaroid:hover {
+        transform: scale(1.1) rotate(0deg) translateY(-10px);
+        box-shadow: 0 15px 40px rgba(194, 24, 91, 0.4);
+        z-index: 10;
+      }
+
+      .polaroid-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+        border-radius: 2px;
+      }
+
+      .polaroid-caption {
+        font-family: 'Brush Script MT', cursive;
+        font-size: 14px;
+        color: #4a4a4a;
+        margin-top: 12px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      body.dark-theme .polaroid {
+        background: #ffffff;
+      }
+
+      body.dark-theme .polaroid-caption {
+        color: #4a4a4a;
+      }
+
+      .babies-section-title {
+        font-family: var(--font-heading);
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        color: #4a4a4a;
+        text-align: center;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 20px;
+      }
+
+      .babies-section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #c2185b, transparent);
+      }
+
+      body.dark-theme .babies-section-title {
+        color: #d8bfd8;
+      }
+
+      .babies-subtitle {
+        text-align: center;
+        color: #999999;
+        margin-bottom: 30px;
+        font-size: 16px;
+        font-style: italic;
+      }
+
+      body.dark-theme .babies-subtitle {
+        color: #888888;
+      }
+
+      /* Days Counter Styles */
+      .days-counter-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 40px;
+      }
+
+      .days-counter-text {
+        font-size: 32px;
+        color: #c2185b;
+        margin: 0;
+        font-weight: 700;
+        text-align: center;
+        font-family: 'Georgia', serif;
+      }
+
+      #days-count {
+        font-size: 40px;
+        color: #e91e63;
+        font-weight: 800;
+      }
+
+      body.dark-theme .days-counter-text {
+        color: #f48fb1;
+      }
+
+      body.dark-theme #days-count {
+        color: #ff69b4;
+      }
+
+      /* Next Chapter Countdown Styles */
+      .countdown-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 80px 40px;
+        background: rgba(194, 24, 91, 0.05);
+        margin: 60px 0;
+        border-radius: 16px;
+      }
+
+      .countdown-title {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        color: #4a4a4a;
+        margin: 0 0 20px 0;
+        font-weight: 700;
+        text-align: center;
+        font-family: var(--font-heading);
+        position: relative;
+        padding-bottom: 20px;
+      }
+
+      .countdown-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #c2185b, transparent);
+      }
+
+      .countdown-subtitle {
+        font-size: 18px;
+        color: #666666;
+        margin: 30px 0;
+        text-align: center;
+        font-family: var(--font-body);
+      }
+
+      .countdown-display {
+        display: flex;
+        gap: 20px;
+        margin: 40px 0;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .countdown-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .countdown-value {
+        font-size: clamp(1.5rem, 5vw, 2.5rem);
+        color: #d8a5d8;
+        font-weight: 800;
+        font-family: var(--font-heading);
+        line-height: 1;
+      }
+
+      .countdown-label {
+        font-size: 10px;
+        color: #999999;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-family: var(--font-body);
+      }
+
+      .countdown-date {
+        font-size: 16px;
+        color: #666666;
+        margin-top: 40px;
+        text-align: center;
+        font-family: var(--font-body);
+      }
+
+      body.dark-theme .countdown-container {
+        background: rgba(216, 191, 216, 0.05);
+      }
+
+      body.dark-theme .countdown-title {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .countdown-subtitle {
+        color: #b8b8b8;
+      }
+
+      body.dark-theme .countdown-value {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .countdown-label {
+        color: #888888;
+      }
+
+      body.dark-theme .countdown-date {
+        color: #b8b8b8;
+      }
+
+      /* Navigation Menu Styles */
+      .navigation-menu {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+      }
+
+      .nav-link {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4a4a4a;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: var(--font-body);
+        padding: 8px 16px;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: #c2185b;
+        border-bottom-color: #c2185b;
+      }
+
+      body.dark-theme .nav-link {
+        color: #d8bfd8;
+      }
+
+      body.dark-theme .nav-link:hover {
+        color: #d8a5d8;
+        border-bottom-color: #d8a5d8;
+      }
+
+      /* Footer Styles */
+      .footer {
+        background: rgba(194, 24, 91, 0.05);
+        padding: 30px 20px;
+        text-align: center;
+        margin-top: 60px;
+        border-top: 1px solid rgba(194, 24, 91, 0.1);
+      }
+
+      .footer p {
+        margin: 0;
+        font-size: 14px;
+        color: #999999;
+        font-family: var(--font-body);
+        letter-spacing: 0.5px;
+      }
+
+      body.dark-theme .footer {
+        background: rgba(216, 191, 216, 0.05);
+        border-top-color: rgba(216, 191, 216, 0.1);
+      }
+
+      body.dark-theme .footer p {
+        color: #888888;
+      }
+
+      @media (max-width: 768px) {
+        .timeline-container {
+          padding: 40px 20px;
+        }
+
+        .header h1 {
+          font-size: 60px;
+        }
+
+        .header p {
+          font-size: 18px;
+        }
+
+        .timeline::before {
+          display: none;
+        }
+
+        .timeline-item {
+          flex-direction: column !important;
+          padding-left: 0;
+        }
+
+        .timeline-content {
+          width: 100%;
+          margin: 0 !important;
+        }
+
+        .timeline-dot {
+          display: none;
+        }
+
+        .timeline-content h3 {
+          font-size: 24px;
+        }
+
+        .timeline-content p {
+          font-size: 16px;
+        }
+      }
+
+      /* Music Controls Styles */
+      .music-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 90px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #000000;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .music-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .music-toggle:active {
+        transform: scale(0.95);
+      }
+
+      body.dark-theme .music-toggle {
+        background: #2a2a2e;
+        border: 1px solid #3a3a3e;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        color: #d8bfd8;
+      }
+
+      /* Scroll to Top Button */
+      .scroll-to-top {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        color: #000000;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .scroll-to-top.show {
+        display: flex;
+      }
+
+      .scroll-to-top:hover {
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .scroll-to-top:active {
+        transform: scale(0.95);
+      }
+
+      body.dark-theme .scroll-to-top {
+        background: #2a2a2e;
+        border: 1px solid #3a3a3e;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+        color: #d8bfd8;
+      }
+    </style>
+    <style>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="welcome-screen" id="welcome-screen">
+      <div class="welcome-content">
+        <div class="heart-emoji">💖</div>
+        <p class="enter-text">click para entrar</p>
+      </div>
+    </div>
+    <div
+      class="timeline-container"
+      id="timeline-container"
+      style="display: none"
+    >
+      <button class="theme-toggle" id="theme-toggle"></button>
+
+      <!-- Controles de Música -->
+      <audio id="background-music">
+        <source src="images/thoseeyes.mp3" type="audio/mpeg" />
+      </audio>
+
+      <button id="music-toggle" class="music-toggle" title="Pausa">⏸</button>
+
+      <button id="scroll-to-top" class="scroll-to-top" title="Volver arriba">
+        ↑
+      </button>
+
+      <div class="header">
+        <h1 id="timeline-title">Ali & Ainhoa</h1>
+        <p id="subtitle">
+          Cada momento contigo queda guardado a fuego en mi memoria.
+        </p>
+        <p id="subtitle">
+          Eres el momento más bonito, el más especial y el más divertido.
+        </p>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="navigation-menu">
+        <a href="#year2024" class="nav-link">2024</a>
+        <a href="#year2025" class="nav-link">2025</a>
+        <a href="#babies-section" class="nav-link">Bebés</a>
+        <a href="#countdown-section" class="nav-link">Próximo capítulo</a>
+        <a href="games.html" class="nav-link">Juegos</a>
+      </nav>
+
+      <div class="timeline">
+        <!-- Year 2024 Section -->
+        <div class="year-section">
+          <div class="year-header" onclick="toggleYear('year2024')">
+            <h2>2024</h2>
+            <span class="toggle-icon" id="icon-year2024">▼</span>
+          </div>
+          <div class="year-content" id="year2024">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img
+                  class="timeline-icon"
+                  src="images/23.png"
+                  alt="Conocerte"
+                />
+                <div class="date" id="moment1-date">25 Octubre 2024</div>
+                <h3 id="moment1-title">Conocerte</h3>
+                <p id="moment1-description">
+                  Un poco manca, la cara cual Wasimodo, y aunque nada fue como
+                  pensaba, no cambiaría nada.
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/7.jpg" alt="Santiago" />
+                <div class="date" id="moment2-date">21 de Noviembre 2024</div>
+                <h3 id="moment2-title">Santiago</h3>
+                <p id="moment2-description">
+                  Nuestra primera aventura de muchas.
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/4.jpg" alt="Mi Amor" />
+                <div class="date" id="moment3-date">5 Diciembre 2024</div>
+                <h3 id="moment3-title">Mi Amor</h3>
+                <p id="moment3-description">
+                  El día que te abrí mi corazón y te dije quiero llamarte mi
+                  amor para siempre.
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img
+                  class="timeline-icon"
+                  src="images/24.jpg"
+                  alt="Naturaleza Encendida"
+                />
+                <div class="date" id="moment4-date">21 Diciembre 2024</div>
+                <h3 id="moment4-title">Naturaleza Encendida</h3>
+                <p id="moment4-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img
+                  class="timeline-icon"
+                  src="images/20.jpg"
+                  alt="Primera vez en Cádiz"
+                />
+                <div class="date" id="moment4b-date">28 Diciembre 2024</div>
+                <h3 id="moment4b-title">Primera vez en Cádiz</h3>
+                <p id="moment4b-description">Conociendo a la Lilota</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Year 2025 Section -->
+        <div class="year-section">
+          <div class="year-header" onclick="toggleYear('year2025')">
+            <h2>2025</h2>
+            <span class="toggle-icon" id="icon-year2025">▼</span>
+          </div>
+          <div class="year-content" id="year2025">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/21.jpg" alt="Córdoba" />
+                <div class="date" id="moment5-date">15 Febrero 2025</div>
+                <h3 id="moment5-title">Córdoba</h3>
+                <p id="moment5-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/2.jpg" alt="Oporto" />
+                <div class="date" id="moment6-date">5 Abril 2025</div>
+                <h3 id="moment6-title">Oporto</h3>
+                <p id="moment6-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/10.jpg" alt="Feria" />
+                <div class="date" id="moment7-date">18 Mayo 2025</div>
+                <h3 id="moment7-title">Feria</h3>
+                <p id="moment7-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img
+                  class="timeline-icon"
+                  src="images/25.jpg"
+                  alt="Champions Burguer"
+                />
+                <div class="date" id="moment8-date">7 Junio 2025</div>
+                <h3 id="moment8-title">Champions Burguer</h3>
+                <p id="moment8-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/16.jpg" alt="Vejer 1" />
+                <div class="date" id="moment9-date">8 Junio 2025</div>
+                <h3 id="moment9-title">Vejer 1</h3>
+                <p id="moment9-description">
+                  Sitios donde no volveremos pero que dejan anécdotas
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/17.jpg" alt="Vejer 2" />
+                <div class="date" id="moment10-date">17 Julio 2025</div>
+                <h3 id="moment10-title">Vejer 2</h3>
+                <p id="moment10-description">
+                  A falta de una mala experiencia bueno es tener que volver para
+                  ir al spa..
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/26.jpg" alt="Cádiz" />
+                <div class="date" id="moment11-date">28 Agosto 2025</div>
+                <h3 id="moment11-title">Cádiz</h3>
+                <p id="moment11-description">
+                  Una más de nuestras cititas románticas
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/27.jpg" alt="Carmona" />
+                <div class="date" id="moment12-date">5 Octubre, 2025</div>
+                <h3 id="moment12-title">Carmona</h3>
+                <p id="moment12-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/12.jpg" alt="Madrid" />
+                <div class="date" id="moment13-date">14 Octubre 2025</div>
+                <h3 id="moment13-title">Madrid</h3>
+                <p id="moment13-description"></p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img
+                  class="timeline-icon"
+                  src="images/28.jpg"
+                  alt="Isla Mágica"
+                />
+                <div class="date" id="moment14-date">1 Noviembre 2025</div>
+                <h3 id="moment14-title">Isla Mágica</h3>
+                <p id="moment14-description">
+                  Parque de atracciones juntas por primera vez
+                </p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <img class="timeline-icon" src="images/30.jpg" alt="Shifu" />
+                <div class="date" id="moment16-date">22 Noviembre, 2025</div>
+                <h3 id="moment16-title">Shifu</h3>
+                <p id="moment16-description">
+                  Aún no ha acabado el año y ya me faltan días para hacer de
+                  todo contigo mi amor
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Love Letter Section -->
+        <div class="love-letter-container">
+          <div class="envelope" id="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-body">
+              <div class="envelope-front">
+                <p class="envelope-text">Ábreme</p>
+              </div>
+              <div class="envelope-letter">
+                <p class="letter-text">Te amo mucho mi princesa</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Babies Gallery Section -->
+        <div id="babies-section">
+          <h2 class="babies-section-title">Nuestros bebés</h2>
+          <p class="babies-subtitle">Mis amores</p>
+
+          <div class="babies-gallery-container">
+            <div class="babies-gallery">
+              <div class="polaroid">
+                <img src="images/29.jpg" alt="Bebé 1" class="polaroid-image" />
+                <div class="polaroid-caption">Pimpota</div>
+              </div>
+
+              <div class="polaroid">
+                <img src="images/31.jpg" alt="Bebé 2" class="polaroid-image" />
+                <div class="polaroid-caption">Kentaro</div>
+              </div>
+
+              <div class="polaroid">
+                <img src="images/32.jpg" alt="Bebé 3" class="polaroid-image" />
+                <div class="polaroid-caption">Lilota</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Chapter Countdown Section -->
+        <div class="countdown-container" id="countdown-section">
+          <h2 class="countdown-title">Próximo capítulo</h2>
+          <p class="countdown-subtitle">Por más aventuras el próximo año</p>
+
+          <div class="countdown-display">
+            <div class="countdown-item">
+              <span class="countdown-value" id="countdown-days">0</span>
+              <span class="countdown-label">DÍAS</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="countdown-hours">0</span>
+              <span class="countdown-label">HORAS</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="countdown-minutes">0</span>
+              <span class="countdown-label">MINUTOS</span>
+            </div>
+            <div class="countdown-item">
+              <span class="countdown-value" id="countdown-seconds">0</span>
+              <span class="countdown-label">SEGUNDOS</span>
+            </div>
+          </div>
+
+          <p class="countdown-date">Hasta el 5 de Diciembre de 2026</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>With Love by Ali © 2025</p>
+    </footer>
+
+    <script>
+      const defaultConfig = {
+        timeline_title: 'Our Love Story',
+        subtitle: 'Every moment with you is a treasure',
+        moment1_date: 'January 15, 2024',
+        moment1_title: 'Conocerte',
+        moment1_description:
+          'The day our eyes first met and I knew my life would never be the same...',
+        moment2_date: 'February 14, 2024',
+        moment2_title: 'Santiago',
+        moment2_description:
+          "Coffee turned into hours of conversation. I couldn't stop smiling...",
+        moment3_date: 'March 20, 2024',
+        moment3_title: 'Mi Amor',
+        moment3_description:
+          'You said yes to being mine. The happiest day of my life!',
+        moment4_date: 'July 4, 2024',
+        moment4_title: 'Naturaleza Encendida',
+        moment4_description:
+          'Our first adventure together. Every moment was magical with you...',
+        moment4b_date: 'August 20, 2024',
+        moment4b_title: 'Primera vez en Cádiz',
+        moment4b_description:
+          'Our first time in this beautiful city by the sea...',
+        moment5_date: 'January 1, 2025',
+        moment5_title: 'Córdoba',
+        moment5_description:
+          'Starting the new year hand in hand, making promises for our future...',
+        moment6_date: 'February 14, 2025',
+        moment6_title: 'Oporto',
+        moment6_description:
+          'Celebrating our love with candlelit dinner and sweet surprises...',
+        moment7_date: 'March 15, 2025',
+        moment7_title: 'Feria',
+        moment7_description:
+          'Sun, sand, and endless laughter with you by my side...',
+        moment8_date: 'April 10, 2025',
+        moment8_title: 'Champions Burguer',
+        moment8_description:
+          'Feeling welcomed and loved by the people who raised you...',
+        moment9_date: 'May 20, 2025',
+        moment9_title: 'Vejer 1',
+        moment9_description:
+          'Exploring new places and making beautiful memories together...',
+        moment10_date: 'June 15, 2025',
+        moment10_title: 'Vejer 2',
+        moment10_description:
+          'Dancing in the kitchen to the song that became ours...',
+        moment11_date: 'July 25, 2025',
+        moment11_title: 'Cádiz',
+        moment11_description:
+          'Long sunny days filled with love and happiness...',
+        moment12_date: 'August 30, 2025',
+        moment12_title: 'Carmona',
+        moment12_description:
+          'Celebrating another year of life and love together...',
+        moment13_date: 'September 15, 2025',
+        moment13_title: 'Madrid',
+        moment13_description:
+          'Creating our own little space filled with love and laughter...',
+        moment14_date: 'October 20, 2025',
+        moment14_title: 'Isla Mágica',
+        moment14_description: 'Walking hand in hand through golden leaves...',
+        moment15_date: 'November 25, 2025',
+        moment15_title: 'Pimpa ',
+        moment15_description:
+          "Grateful for every moment we share and all that's to come...",
+        moment16_date: 'December 25, 2025',
+        moment16_title: 'Shifu',
+        moment16_description:
+          'Our first Christmas together filled with love and joy...',
+        background_color: '#e1bee7',
+        primary_color: '#000000',
+        accent_color: '#000000',
+        card_color: '#ffffff',
+        text_color: '#000000',
+      };
+
+      async function onConfigChange(config) {
+        document.getElementById('timeline-title').textContent =
+          config.timeline_title || defaultConfig.timeline_title;
+        document.getElementById('subtitle').textContent =
+          config.subtitle || defaultConfig.subtitle;
+
+        document.getElementById('moment1-date').textContent =
+          config.moment1_date || defaultConfig.moment1_date;
+        document.getElementById('moment1-title').textContent =
+          config.moment1_title || defaultConfig.moment1_title;
+        document.getElementById('moment1-description').textContent =
+          config.moment1_description || defaultConfig.moment1_description;
+
+        document.getElementById('moment2-date').textContent =
+          config.moment2_date || defaultConfig.moment2_date;
+        document.getElementById('moment2-title').textContent =
+          config.moment2_title || defaultConfig.moment2_title;
+        document.getElementById('moment2-description').textContent =
+          config.moment2_description || defaultConfig.moment2_description;
+
+        document.getElementById('moment3-date').textContent =
+          config.moment3_date || defaultConfig.moment3_date;
+        document.getElementById('moment3-title').textContent =
+          config.moment3_title || defaultConfig.moment3_title;
+        document.getElementById('moment3-description').textContent =
+          config.moment3_description || defaultConfig.moment3_description;
+
+        document.getElementById('moment4-date').textContent =
+          config.moment4_date || defaultConfig.moment4_date;
+        document.getElementById('moment4-title').textContent =
+          config.moment4_title || defaultConfig.moment4_title;
+        document.getElementById('moment4-description').textContent =
+          config.moment4_description || defaultConfig.moment4_description;
+
+        document.getElementById('moment4b-date').textContent =
+          config.moment4b_date || defaultConfig.moment4b_date;
+        document.getElementById('moment4b-title').textContent =
+          config.moment4b_title || defaultConfig.moment4b_title;
+        document.getElementById('moment4b-description').textContent =
+          config.moment4b_description || defaultConfig.moment4b_description;
+
+        document.getElementById('moment5-date').textContent =
+          config.moment5_date || defaultConfig.moment5_date;
+        document.getElementById('moment5-title').textContent =
+          config.moment5_title || defaultConfig.moment5_title;
+        document.getElementById('moment5-description').textContent =
+          config.moment5_description || defaultConfig.moment5_description;
+
+        document.getElementById('moment6-date').textContent =
+          config.moment6_date || defaultConfig.moment6_date;
+        document.getElementById('moment6-title').textContent =
+          config.moment6_title || defaultConfig.moment6_title;
+        document.getElementById('moment6-description').textContent =
+          config.moment6_description || defaultConfig.moment6_description;
+
+        document.getElementById('moment7-date').textContent =
+          config.moment7_date || defaultConfig.moment7_date;
+        document.getElementById('moment7-title').textContent =
+          config.moment7_title || defaultConfig.moment7_title;
+        document.getElementById('moment7-description').textContent =
+          config.moment7_description || defaultConfig.moment7_description;
+
+        document.getElementById('moment8-date').textContent =
+          config.moment8_date || defaultConfig.moment8_date;
+        document.getElementById('moment8-title').textContent =
+          config.moment8_title || defaultConfig.moment8_title;
+        document.getElementById('moment8-description').textContent =
+          config.moment8_description || defaultConfig.moment8_description;
+
+        document.getElementById('moment9-date').textContent =
+          config.moment9_date || defaultConfig.moment9_date;
+        document.getElementById('moment9-title').textContent =
+          config.moment9_title || defaultConfig.moment9_title;
+        document.getElementById('moment9-description').textContent =
+          config.moment9_description || defaultConfig.moment9_description;
+
+        document.getElementById('moment10-date').textContent =
+          config.moment10_date || defaultConfig.moment10_date;
+        document.getElementById('moment10-title').textContent =
+          config.moment10_title || defaultConfig.moment10_title;
+        document.getElementById('moment10-description').textContent =
+          config.moment10_description || defaultConfig.moment10_description;
+
+        document.getElementById('moment11-date').textContent =
+          config.moment11_date || defaultConfig.moment11_date;
+        document.getElementById('moment11-title').textContent =
+          config.moment11_title || defaultConfig.moment11_title;
+        document.getElementById('moment11-description').textContent =
+          config.moment11_description || defaultConfig.moment11_description;
+
+        document.getElementById('moment12-date').textContent =
+          config.moment12_date || defaultConfig.moment12_date;
+        document.getElementById('moment12-title').textContent =
+          config.moment12_title || defaultConfig.moment12_title;
+        document.getElementById('moment12-description').textContent =
+          config.moment12_description || defaultConfig.moment12_description;
+
+        document.getElementById('moment13-date').textContent =
+          config.moment13_date || defaultConfig.moment13_date;
+        document.getElementById('moment13-title').textContent =
+          config.moment13_title || defaultConfig.moment13_title;
+        document.getElementById('moment13-description').textContent =
+          config.moment13_description || defaultConfig.moment13_description;
+
+        document.getElementById('moment14-date').textContent =
+          config.moment14_date || defaultConfig.moment14_date;
+        document.getElementById('moment14-title').textContent =
+          config.moment14_title || defaultConfig.moment14_title;
+        document.getElementById('moment14-description').textContent =
+          config.moment14_description || defaultConfig.moment14_description;
+
+        document.getElementById('moment15-date').textContent =
+          config.moment15_date || defaultConfig.moment15_date;
+        document.getElementById('moment15-title').textContent =
+          config.moment15_title || defaultConfig.moment15_title;
+        document.getElementById('moment15-description').textContent =
+          config.moment15_description || defaultConfig.moment15_description;
+
+        document.getElementById('moment16-date').textContent =
+          config.moment16_date || defaultConfig.moment16_date;
+        document.getElementById('moment16-title').textContent =
+          config.moment16_title || defaultConfig.moment16_title;
+        document.getElementById('moment16-description').textContent =
+          config.moment16_description || defaultConfig.moment16_description;
+
+        const backgroundColor =
+          config.background_color || defaultConfig.background_color;
+        const primaryColor =
+          config.primary_color || defaultConfig.primary_color;
+        const accentColor = config.accent_color || defaultConfig.accent_color;
+        const cardColor = config.card_color || defaultConfig.card_color;
+        const textColor = config.text_color || defaultConfig.text_color;
+
+        document.body.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${backgroundColor}dd 100%)`;
+        document.querySelector('.header h1').style.color = primaryColor;
+        document.querySelector('.header p').style.color = accentColor;
+
+        const dates = document.querySelectorAll('.date');
+        dates.forEach((date) => (date.style.color = accentColor));
+
+        const titles = document.querySelectorAll('.timeline-content h3');
+        titles.forEach((title) => (title.style.color = primaryColor));
+
+        const descriptions = document.querySelectorAll('.timeline-content p');
+        descriptions.forEach((desc) => (desc.style.color = textColor));
+
+        const cards = document.querySelectorAll('.timeline-content');
+        cards.forEach((card) => (card.style.background = cardColor));
+
+        const dots = document.querySelectorAll('.timeline-dot');
+        dots.forEach((dot) => (dot.style.background = accentColor));
+      }
+
+      function mapToCapabilities(config) {
+        return {
+          recolorables: [
+            {
+              get: () =>
+                config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ primary_color: value });
+                }
+              },
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ accent_color: value });
+                }
+              },
+            },
+            {
+              get: () => config.card_color || defaultConfig.card_color,
+              set: (value) => {
+                config.card_color = value;
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ card_color: value });
+                }
+              },
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                if (window.elementSdk) {
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+            },
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined,
+        };
+      }
+
+      function mapToEditPanelValues(config) {
+        return new Map([
+          [
+            'timeline_title',
+            config.timeline_title || defaultConfig.timeline_title,
+          ],
+          ['subtitle', config.subtitle || defaultConfig.subtitle],
+          ['moment1_date', config.moment1_date || defaultConfig.moment1_date],
+          [
+            'moment1_title',
+            config.moment1_title || defaultConfig.moment1_title,
+          ],
+          [
+            'moment1_description',
+            config.moment1_description || defaultConfig.moment1_description,
+          ],
+          ['moment2_date', config.moment2_date || defaultConfig.moment2_date],
+          [
+            'moment2_title',
+            config.moment2_title || defaultConfig.moment2_title,
+          ],
+          [
+            'moment2_description',
+            config.moment2_description || defaultConfig.moment2_description,
+          ],
+          ['moment3_date', config.moment3_date || defaultConfig.moment3_date],
+          [
+            'moment3_title',
+            config.moment3_title || defaultConfig.moment3_title,
+          ],
+          [
+            'moment3_description',
+            config.moment3_description || defaultConfig.moment3_description,
+          ],
+          ['moment4_date', config.moment4_date || defaultConfig.moment4_date],
+          [
+            'moment4_title',
+            config.moment4_title || defaultConfig.moment4_title,
+          ],
+          [
+            'moment4_description',
+            config.moment4_description || defaultConfig.moment4_description,
+          ],
+          [
+            'moment4b_date',
+            config.moment4b_date || defaultConfig.moment4b_date,
+          ],
+          [
+            'moment4b_title',
+            config.moment4b_title || defaultConfig.moment4b_title,
+          ],
+          [
+            'moment4b_description',
+            config.moment4b_description || defaultConfig.moment4b_description,
+          ],
+          ['moment5_date', config.moment5_date || defaultConfig.moment5_date],
+          [
+            'moment5_title',
+            config.moment5_title || defaultConfig.moment5_title,
+          ],
+          [
+            'moment5_description',
+            config.moment5_description || defaultConfig.moment5_description,
+          ],
+          ['moment6_date', config.moment6_date || defaultConfig.moment6_date],
+          [
+            'moment6_title',
+            config.moment6_title || defaultConfig.moment6_title,
+          ],
+          [
+            'moment6_description',
+            config.moment6_description || defaultConfig.moment6_description,
+          ],
+          ['moment7_date', config.moment7_date || defaultConfig.moment7_date],
+          [
+            'moment7_title',
+            config.moment7_title || defaultConfig.moment7_title,
+          ],
+          [
+            'moment7_description',
+            config.moment7_description || defaultConfig.moment7_description,
+          ],
+          ['moment8_date', config.moment8_date || defaultConfig.moment8_date],
+          [
+            'moment8_title',
+            config.moment8_title || defaultConfig.moment8_title,
+          ],
+          [
+            'moment8_description',
+            config.moment8_description || defaultConfig.moment8_description,
+          ],
+          ['moment9_date', config.moment9_date || defaultConfig.moment9_date],
+          [
+            'moment9_title',
+            config.moment9_title || defaultConfig.moment9_title,
+          ],
+          [
+            'moment9_description',
+            config.moment9_description || defaultConfig.moment9_description,
+          ],
+          [
+            'moment10_date',
+            config.moment10_date || defaultConfig.moment10_date,
+          ],
+          [
+            'moment10_title',
+            config.moment10_title || defaultConfig.moment10_title,
+          ],
+          [
+            'moment10_description',
+            config.moment10_description || defaultConfig.moment10_description,
+          ],
+          [
+            'moment11_date',
+            config.moment11_date || defaultConfig.moment11_date,
+          ],
+          [
+            'moment11_title',
+            config.moment11_title || defaultConfig.moment11_title,
+          ],
+          [
+            'moment11_description',
+            config.moment11_description || defaultConfig.moment11_description,
+          ],
+          [
+            'moment12_date',
+            config.moment12_date || defaultConfig.moment12_date,
+          ],
+          [
+            'moment12_title',
+            config.moment12_title || defaultConfig.moment12_title,
+          ],
+          [
+            'moment12_description',
+            config.moment12_description || defaultConfig.moment12_description,
+          ],
+          [
+            'moment13_date',
+            config.moment13_date || defaultConfig.moment13_date,
+          ],
+          [
+            'moment13_title',
+            config.moment13_title || defaultConfig.moment13_title,
+          ],
+          [
+            'moment13_description',
+            config.moment13_description || defaultConfig.moment13_description,
+          ],
+          [
+            'moment14_date',
+            config.moment14_date || defaultConfig.moment14_date,
+          ],
+          [
+            'moment14_title',
+            config.moment14_title || defaultConfig.moment14_title,
+          ],
+          [
+            'moment14_description',
+            config.moment14_description || defaultConfig.moment14_description,
+          ],
+          [
+            'moment15_date',
+            config.moment15_date || defaultConfig.moment15_date,
+          ],
+          [
+            'moment15_title',
+            config.moment15_title || defaultConfig.moment15_title,
+          ],
+          [
+            'moment15_description',
+            config.moment15_description || defaultConfig.moment15_description,
+          ],
+          [
+            'moment16_date',
+            config.moment16_date || defaultConfig.moment16_date,
+          ],
+          [
+            'moment16_title',
+            config.moment16_title || defaultConfig.moment16_title,
+          ],
+          [
+            'moment16_description',
+            config.moment16_description || defaultConfig.moment16_description,
+          ],
+        ]);
+      }
+
+      // Welcome screen functionality
+      const welcomeScreen = document.getElementById('welcome-screen');
+      const timelineContainer = document.getElementById('timeline-container');
+
+      welcomeScreen.addEventListener('click', () => {
+        welcomeScreen.style.opacity = '0';
+        welcomeScreen.style.transition = 'opacity 0.5s ease';
+
+        setTimeout(() => {
+          welcomeScreen.style.display = 'none';
+          timelineContainer.style.display = 'block';
+        }, 500);
+      });
+
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('theme-toggle');
+      let isDarkTheme = false;
+
+      // Set initial emoji on page load
+      themeToggle.textContent = '🌙';
+
+      themeToggle.addEventListener('click', () => {
+        isDarkTheme = !isDarkTheme;
+        document.body.classList.toggle('dark-theme');
+        themeToggle.textContent = isDarkTheme ? '☀️' : '🌙';
+      });
+
+      // Music controls functionality
+      const audioElement = document.getElementById('background-music');
+      const musicToggle = document.getElementById('music-toggle');
+      let isPlaying = false;
+
+      // Start music automatically
+      window.addEventListener('load', () => {
+        audioElement.play();
+        isPlaying = true;
+        musicToggle.textContent = '❚❚';
+        musicToggle.title = 'Pausa';
+      });
+
+      // Toggle play/pause on button click
+      musicToggle.addEventListener('click', () => {
+        if (isPlaying) {
+          audioElement.pause();
+          musicToggle.textContent = '▶';
+          musicToggle.title = 'Reproducir';
+        } else {
+          audioElement.play();
+          musicToggle.textContent = '❚❚';
+          musicToggle.title = 'Pausa';
+        }
+        isPlaying = !isPlaying;
+      });
+
+      // Update button state when audio ends
+      audioElement.addEventListener('ended', () => {
+        isPlaying = false;
+        musicToggle.textContent = '▶';
+        musicToggle.title = 'Reproducir';
+      });
+
+      // Love letter envelope functionality
+      const envelope = document.getElementById('envelope');
+      envelope.addEventListener('click', () => {
+        envelope.classList.toggle('opened');
+      });
+
+      // Next Chapter Countdown functionality
+      function updateCountdown() {
+        // Target date: December 5, 2026 at 00:00
+        const targetDate = new Date('2026-12-05T00:00:00').getTime();
+        const now = new Date().getTime();
+        const timeRemaining = targetDate - now;
+
+        if (timeRemaining > 0) {
+          const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+          const hours = Math.floor(
+            (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          );
+          const minutes = Math.floor(
+            (timeRemaining % (1000 * 60 * 60)) / (1000 * 60),
+          );
+          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+          document.getElementById('countdown-days').textContent = days;
+          document.getElementById('countdown-hours').textContent = String(
+            hours,
+          ).padStart(2, '0');
+          document.getElementById('countdown-minutes').textContent = String(
+            minutes,
+          ).padStart(2, '0');
+          document.getElementById('countdown-seconds').textContent = String(
+            seconds,
+          ).padStart(2, '0');
+        }
+      }
+
+      // Update countdown on load
+      window.addEventListener('DOMContentLoaded', () => {
+        updateCountdown();
+        // Update every second
+        setInterval(updateCountdown, 1000);
+      });
+
+      // Scroll to top functionality
+      const scrollToTopBtn = document.getElementById('scroll-to-top');
+
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          scrollToTopBtn.classList.add('show');
+        } else {
+          scrollToTopBtn.classList.remove('show');
+        }
+      });
+
+      scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+      });
+
+      // Year section toggle functionality
+      function toggleYear(yearId) {
+        const yearContent = document.getElementById(yearId);
+        const icon = document.getElementById('icon-' + yearId);
+
+        if (yearContent) {
+          yearContent.classList.toggle('expanded');
+        }
+        if (icon) {
+          icon.classList.toggle('rotated');
+        }
+      }
+
+      // Function to expand a year when navigating to it
+      function expandYear(yearId) {
+        const yearContent = document.getElementById(yearId);
+        const icon = document.getElementById('icon-' + yearId);
+
+        if (yearContent && !yearContent.classList.contains('expanded')) {
+          yearContent.classList.add('expanded');
+          icon.classList.add('rotated');
+        }
+      }
+
+      // Handle navigation anchor clicks
+      document.querySelectorAll('.nav-link').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (href && href.startsWith('#')) {
+            const targetId = href.substring(1);
+            // Expand the year if it's a year section
+            if (targetId.startsWith('year')) {
+              setTimeout(() => {
+                expandYear(targetId);
+                // Scroll with offset to avoid header covering content
+                const element = document.getElementById(targetId);
+                if (element) {
+                  const offset = 100;
+                  const elementPosition =
+                    element.getBoundingClientRect().top + window.pageYOffset;
+                  window.scrollTo({
+                    top: elementPosition - offset,
+                    behavior: 'smooth',
+                  });
+                }
+              }, 100);
+            }
+          }
+        });
+      });
+
+      // Expand first year by default
+      window.addEventListener('DOMContentLoaded', () => {
+        const firstYear = document.getElementById('year2024');
+        const firstIcon = document.getElementById('icon-year2024');
+        if (firstYear && firstIcon) {
+          firstYear.classList.add('expanded');
+          firstIcon.classList.add('rotated');
+        }
+      });
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues,
+        });
+      }
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement('script');
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9a6c9827058d1bfe',t:'MTc2NDUyOTI5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName('head')[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement('iframe');
+          a.height = 1;
+          a.width = 1;
+          a.style.position = 'absolute';
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = 'none';
+          a.style.visibility = 'hidden';
+          document.body.appendChild(a);
+          if ('loading' !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener('DOMContentLoaded', c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              'loading' !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
